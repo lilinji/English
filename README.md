@@ -5,6 +5,7 @@
 [![TOEFL](https://img.shields.io/badge/Focus-TOEFL-blue.svg)](#-托福资源-toefl)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
+![](Gemini_Generated_Image_49mvq549mvq549mv.png)
 > 🚀 **本项目致力于提供最全面、最系统、最优质的英语单词词库，涵盖从小学到博士、从雅思托福到商务英语的所有核心内容。所有词库均包含中文释义与标准国际音标 (IPA)，可轻松导入各类主流背单词应用。**
 
 ---
