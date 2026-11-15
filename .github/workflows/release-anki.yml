@@ -1,0 +1,58 @@
+name: Build and release Anki collections
+
+on:
+  push:
+    tags:
+      - '**'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deck builder dependencies
+        run: python -m pip install --upgrade pip openpyxl xlrd genanki
+
+      - name: Build Anki decks
+        run: python .scripts/papkg.py --root . --output-dir .anki --force
+
+      - name: Zip the complete output directory
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZIP_DEFLATED, ZipFile
+
+          root = Path('.anki')
+          files = sorted(path for path in root.rglob('*') if path.is_file())
+          if not any(path.suffix.lower() == '.apkg' for path in files):
+              raise SystemExit('No APKG files were generated')
+
+          with ZipFile('collections.zip', 'w', compression=ZIP_DEFLATED) as archive:
+              for path in files:
+                  archive.write(path, path.relative_to(root))
+
+          print(f'Created collections.zip with {len(files)} file(s), without the .anki directory prefix')
+          PY
+
+      - name: Publish ZIP to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" collections.zip --clobber
+          else
+            gh release create "$TAG_NAME" collections.zip --title "$TAG_NAME" --generate-notes
+          fi
