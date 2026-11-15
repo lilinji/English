@@ -1,3 +1,6 @@
+# Generated Anki decks
+.anki/
+
 # OS
 Thumbs.db
 Desktop.ini
